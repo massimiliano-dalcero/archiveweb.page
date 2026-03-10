@@ -38,6 +38,27 @@ class ElectronRecorderApp extends ElectronReplayApp {
     // @ts-expect-error - TS2339 - Property 'certCache' does not exist on type 'ElectronRecorderApp'.
     this.certCache = new Map();
     this.opts = opts;
+
+    // @ts-expect-error - TS2339 - Property 'downloadPath' does not exist on type 'ElectronRecorderApp'.
+    this.downloadPath = app.getPath("downloads");
+    // @ts-expect-error - TS2339 - Property 'startPage' does not exist on type 'ElectronRecorderApp'.
+    this.startPage = "";
+
+    for (let i = 0; i < process.argv.length; i++) {
+      if (process.argv[i].startsWith("--download-path=")) {
+        // @ts-expect-error - TS2339 - Property 'downloadPath' does not exist on type 'ElectronRecorderApp'.
+        this.downloadPath = process.argv[i].split("=")[1];
+      } else if (process.argv[i] === "--download-path" && i + 1 < process.argv.length) {
+        // @ts-expect-error - TS2339 - Property 'downloadPath' does not exist on type 'ElectronRecorderApp'.
+        this.downloadPath = process.argv[i + 1];
+      } else if (process.argv[i].startsWith("--start-page=")) {
+        // @ts-expect-error - TS2339 - Property 'startPage' does not exist on type 'ElectronRecorderApp'.
+        this.startPage = process.argv[i].split("=")[1];
+      } else if (process.argv[i] === "--start-page" && i + 1 < process.argv.length) {
+        // @ts-expect-error - TS2339 - Property 'startPage' does not exist on type 'ElectronRecorderApp'.
+        this.startPage = process.argv[i + 1];
+      }
+    }
   }
 
   opts: any;
@@ -106,7 +127,8 @@ class ElectronRecorderApp extends ElectronReplayApp {
       console.log(`will-download: ${origFilename}`);
 
       item.setSavePath(
-        unusedFilenameSync(path.join(app.getPath("downloads"), origFilename)),
+        // @ts-expect-error - TS2339 - Property 'downloadPath' does not exist on type 'ElectronRecorderApp'.
+        unusedFilenameSync(path.join(this.downloadPath, origFilename)),
       );
 
       ipcMain.on("dlcancel:" + origFilename, () => {
@@ -158,7 +180,13 @@ class ElectronRecorderApp extends ElectronReplayApp {
   }
 
   get mainWindowUrl() {
-    return "index.html";
+    let url = "index.html";
+    // @ts-expect-error - TS2339 - Property 'startPage' does not exist on type 'ElectronRecorderApp'.
+    if (this.startPage) {
+      // @ts-expect-error - TS2339 - Property 'startPage' does not exist on type 'ElectronRecorderApp'.
+      url += "?startPage=" + encodeURIComponent(this.startPage);
+    }
+    return url;
   }
 
   // @ts-expect-error - TS7006 - Parameter 'argv' implicitly has an 'any' type.
