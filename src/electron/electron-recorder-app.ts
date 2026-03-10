@@ -310,14 +310,13 @@ class ElectronRecorderApp extends ElectronReplayApp {
     recWebContents.setWindowOpenHandler(
       (details: HandlerDetails): WindowOpenHandlerResponse => {
         const { url } = details;
-        return {
-          action: "allow",
-          outlivesOpener: true,
-          createWindow: () => {
-            const win = this.createRecordWindow({ url, collId, startRec });
-            return win.webContents;
-          },
-        };
+
+        // Asynchronously create our custom recording window
+        setTimeout(() => {
+          this.createRecordWindow({ url, collId, startRec });
+        }, 0);
+
+        return { action: "deny" };
       },
     );
 
