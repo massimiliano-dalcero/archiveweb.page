@@ -288,30 +288,19 @@ class RecWindowUI extends LitElement {
           <a
             href="#"
             role="button"
-            id="refresh"
-            class="button is-borderless ${
-      // @ts-expect-error - TS2339 - Property 'isLoading' does not exist on type 'RecWindowUI'.
-      this.isLoading ? "is-loading" : ""
-      }"
+            class="button is-borderless"
+            id="wr-refresh"
             @click="${this.onRefresh}"
             @keyup="${clickOnSpacebarPress}"
-            title="Reload"
-            aria-label="Reload"
+            title="Refresh"
+            aria-label="Refresh"
           >
             <span class="icon is-small">
-              ${
-      // @ts-expect-error - TS2339 - Property 'isLoading' does not exist on type 'RecWindowUI'.
-      !this.isLoading
-        ? html`
                       <fa-icon
                         size="1.0em"
-                        class="has-text-grey"
                         aria-hidden="true"
                         .svg="${fasRefresh}"
                       ></fa-icon>
-                    `
-        : ""
-      }
             </span>
           </a>
           <form @submit="${this.onSubmit}">

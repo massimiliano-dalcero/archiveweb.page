@@ -7,6 +7,9 @@ import { SWManager } from "replaywebpage";
 
 import fasHelp from "@fortawesome/fontawesome-free/svgs/solid/question-circle.svg";
 import fasPlus from "@fortawesome/fontawesome-free/svgs/solid/plus.svg";
+import fasSyncAlt from "@fortawesome/fontawesome-free/svgs/solid/sync-alt.svg";
+import fasArrowLeft from "@fortawesome/fontawesome-free/svgs/solid/arrow-left.svg";
+import fasArrowRight from "@fortawesome/fontawesome-free/svgs/solid/arrow-right.svg";
 
 import fasUpload from "@fortawesome/fontawesome-free/svgs/solid/upload.svg";
 import fasCog from "@fortawesome/fontawesome-free/svgs/solid/cog.svg";
@@ -483,6 +486,126 @@ class ArchiveWebApp extends ReplayWebApp {
       height="1.25rem"
       aria-hidden="true"
     ></fa-icon>`;
+  }
+
+  renderNavBar() {
+    return html` <a
+        href="#skip-main-target"
+        @click=${this.skipMenu}
+        class="skip-link"
+        >Skip main navigation</a
+      >
+      <nav class="navbar" aria-label="main">
+        <div class="navbar-brand">
+          ${!this.embed
+        ? html`
+                <a
+                  href="${this.homeUrl}"
+                  class="navbar-item wr-logo-item"
+                  aria-label="ReplayWeb.page Home"
+                >
+                  ${this.renderNavBrand()}
+                </a>
+                ${this.collTitle
+            ? html`
+                      <a
+                        href="${this.collPageUrl}"
+                        class="no-wrap is-size-6 has-text-black"
+                        >/&nbsp;&nbsp;<i>${this.collTitle}</i></a
+                      >
+                      <span class="no-wrap is-size-6"
+                        >&nbsp;&nbsp;/&nbsp;
+                        ${this.pageReplay
+                ? html`<i>${this.pageTitle}</i>`
+                : this.pageTitle}
+                      </span>
+                    `
+            : ""}
+              `
+        : html`
+                <span class="navbar-item wr-logo-item">
+                  <fa-icon
+                    id="wrlogo"
+                    size="1.0rem"
+                    .svg=${this.mainLogo}
+                    aria-hidden="true"
+                  ></fa-icon>
+                </span>
+              `}
+          <a
+            href="#"
+            role="button"
+            id="menu-button"
+            @click="${this.onNavMenu}"
+            class="navbar-burger burger ${this.navMenuShown ? "is-active" : ""}"
+            aria-label="main menu"
+            aria-haspopup="true"
+            aria-expanded="${this.navMenuShown}"
+          >
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+          </a>
+        </div>
+        ${!this.sourceUrl
+        ? html` <div
+              class="navbar-menu ${this.navMenuShown ? "is-active" : ""}"
+            >
+              <div class="navbar-start">
+                ${IS_APP
+            ? html`
+                      <a
+                        role="button"
+                        href="#"
+                        class="navbar-item arrow-button"
+                        title="Go Back"
+                        @click="${() => window.history.back()}"
+                      >
+                        <fa-icon
+                          size="1.0rem"
+                          .svg="${fasArrowLeft}"
+                          aria-hidden="true"
+                        ></fa-icon
+                        ><span class="menu-only is-size-7">&nbsp;Go Back</span>
+                      </a>
+                      <a
+                        role="button"
+                        href="#"
+                        class="navbar-item arrow-button"
+                        title="Go Forward"
+                        @click="${() => window.history.forward()}"
+                      >
+                        <fa-icon
+                          size="1.0rem"
+                          .svg="${fasArrowRight}"
+                          aria-hidden="true"
+                        ></fa-icon
+                        ><span class="menu-only is-size-7">&nbsp;Go Forward</span>
+                      </a>
+                      <a
+                        role="button"
+                        href="#"
+                        class="navbar-item arrow-button"
+                        title="Refresh"
+                        @click="${() => window.location.reload()}"
+                      >
+                        <fa-icon
+                          size="1.0rem"
+                          .svg="${fasSyncAlt}"
+                          aria-hidden="true"
+                        ></fa-icon
+                        ><span class="menu-only is-size-7">&nbsp;Refresh</span>
+                      </a>
+                    `
+            : ""}
+              </div>
+              ${!this.embed
+            ? html` <div class="navbar-end">${this.renderNavEnd()}</div>`
+            : html``}
+            </div>`
+        : html``}
+      </nav>
+      <p id="skip-main-target" tabindex="-1" class="is-sr-only">Skipped</p>`;
   }
 
   renderHomeIndex() {
