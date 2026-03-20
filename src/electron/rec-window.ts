@@ -155,7 +155,7 @@ class RecWindowUI extends LitElement {
         height: 100%;
         display: flex;
         align-items: center;
-        padding-left: 8px;
+        padding-left: 11px;
         pointer-events: none; /* Let clicks pass through, but re-enable for children */
         z-index: 4;
       }
@@ -296,11 +296,11 @@ class RecWindowUI extends LitElement {
             aria-label="Refresh"
           >
             <span class="icon is-small">
-                      <fa-icon
-                        size="1.0em"
-                        aria-hidden="true"
-                        .svg="${fasRefresh}"
-                      ></fa-icon>
+              <fa-icon
+                size="1.0em"
+                aria-hidden="true"
+                .svg="${fasRefresh}"
+              ></fa-icon>
             </span>
           </a>
           <form @submit="${this.onSubmit}">
@@ -313,7 +313,7 @@ class RecWindowUI extends LitElement {
               <input
                 id="url"
                 class="input"
-                style="padding-left: 5em !important;"
+                style="padding-left: 4em !important;"
                 type="url"
                 @keydown="${this.onKeyDown}"
                 @blur="${this.onLostFocus}"
@@ -330,11 +330,11 @@ class RecWindowUI extends LitElement {
       this.url && this.url.startsWith("https://")
         ? html`<span 
                       class="icon is-small" 
-                      style="pointer-events: auto; cursor: pointer; z-index: 5;"
+                      style="pointer-events: auto; cursor: pointer; z-index: 100; margin-top: 3px;"
                       @click="${this.onToggleCertPopup}"
                       title="View Certificate"
                     >
-                      <fa-icon .svg="${fasLock}" size="0.8em"></fa-icon>
+                      <fa-icon .svg="${fasLock}" size="1.3em"></fa-icon>
                     </span>`
         : ""
       }
@@ -342,7 +342,7 @@ class RecWindowUI extends LitElement {
               ${
       // @ts-expect-error - TS2339 - Property 'favIconUrl' does not exist on type 'RecWindowUI'.
       this.favIconUrl
-        ? html` <span class="favicon icon is-small">
+        ? html` <span class="favicon icon is-small drift" style="left: 4px !important;">
                       <img
                         src="${
           // @ts-expect-error - TS2339 - Property 'favIconUrl' does not exist on type 'RecWindowUI'.
