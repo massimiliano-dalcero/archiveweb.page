@@ -122,7 +122,18 @@ class ElectronRecorderApp extends ElectronReplayApp {
     });
 
     sesh.on("will-download", (event, item, webContents) => {
-      const origFilename = item.getFilename();
+      let origFilename = item.getFilename();
+
+      const urlChain = item.getURLChain() || [];
+      const certUrl = urlChain.find(u => u.includes("cert://"));
+      if (certUrl) {
+         try {
+           const host = new URL(certUrl.substring(certUrl.indexOf("cert://"))).hostname;
+           if (host) {
+             origFilename = `${host}_cert.cer`;
+           }
+         } catch(e) {}
+      }
 
       console.log(`will-download: ${origFilename}`);
 
@@ -351,6 +362,43 @@ class ElectronRecorderApp extends ElectronReplayApp {
     recWebContents.on("destroyed", () => {
       // @ts-expect-error - TS2339 - Property 'recorders' does not exist on type 'ElectronRecorderApp'.
       this.recorders.delete(id);
+    });
+
+    const archivedCerts = new Set();
+    // @ts-expect-error - TS7006 - Parameter 'event' implicitly has an 'any' type.
+    recWebContents.on("did-navigate", (event, navUrl: string) => {
+      try {
+        const hostname = new URL(navUrl).hostname;
+        // @ts-expect-error - TS2339 - Property 'certCache' does not exist on type 'ElectronRecorderApp'.
+        const certObj = this.certCache.get(hostname);
+        if (certObj && certObj.certificate && !archivedCerts.has(hostname)) {
+          archivedCerts.add(hostname);
+          const payload = Buffer.from(certObj.certificate.data, "utf8");
+          const data = {
+            url: `cert://${hostname}/`,
+            ts: Date.now(),
+            method: "GET",
+            status: 200,
+            statusText: "OK",
+            mime: "application/x-x509-ca-cert",
+            reqHeaders: {},
+            respHeaders: {
+              "Content-Type": "application/x-x509-ca-cert",
+              "Content-Length": payload.length.toString(),
+              "Content-Disposition": `attachment; filename="${hostname}_cert.cer"`,
+            },
+            payload: payload,
+            extraOpts: { resource: true },
+          };
+          // @ts-expect-error - TS2339 - Property 'recorders' does not exist on type 'ElectronRecorderApp'.
+          const rec = this.recorders.get(id);
+          if (rec && rec.running && rec.appWC) {
+            rec.appWC.send("add-resource", data, collId);
+          }
+        }
+      } catch (e) {
+        // ignore
+      }
     });
 
     //await recWebContents.loadURL("about:blank");
